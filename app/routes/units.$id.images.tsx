@@ -2,6 +2,11 @@ import type { Route } from "./+types/units.$id.images";
 import { Link } from "react-router";
 import { Header } from "~/components/layout/Header";
 import { ImageManager } from "~/components/units/ImagesManager";
+import {
+  deleteImage,
+  setCoverImage,
+  uploadImages,
+} from "~/lib/api/manage-images.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const { id } = params as { id: string };
@@ -21,43 +26,23 @@ export async function action({ request, params }: Route.ActionArgs) {
     const files = formData.getAll("images") as File[];
     const uploadData = new FormData();
     files.forEach((file) => uploadData.append("images", file));
-    const res = await fetch(
-      `${process.env.API_URL}/portal/units/${id}/images?isCover=${isCover}`,
-      {
-        method: "POST",
-        headers: { "x-api-key": process.env.PORTAL_API_KEY! },
-        body: uploadData,
-        // @ts-ignore
-        duplex: "half",
-      },
-    );
-    if (!res.ok) throw new Error("Failed to upload images");
-    return await res.json();
+
+    const images = await uploadImages(id, files, isCover);
+
+    return images;
   }
 
   if (intent === "deleteImage") {
     const imageId = formData.get("imageId") as string;
-    const res = await fetch(
-      `${process.env.API_URL}/portal/units/${id}/images/${imageId}`,
-      {
-        method: "DELETE",
-        headers: { "x-api-key": process.env.PORTAL_API_KEY! },
-      },
-    );
-    if (!res.ok) throw new Error("Failed to delete image");
+    await deleteImage(id, imageId);
+
     return { ok: true };
   }
 
   if (intent === "setCover") {
     const imageId = formData.get("imageId") as string;
-    const res = await fetch(
-      `${process.env.API_URL}/portal/units/${id}/images/${imageId}/cover`,
-      {
-        method: "PATCH",
-        headers: { "x-api-key": process.env.PORTAL_API_KEY! },
-      },
-    );
-    if (!res.ok) throw new Error("Failed to set cover");
+    await setCoverImage(id, imageId);
+
     return { ok: true };
   }
 

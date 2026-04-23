@@ -50,7 +50,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   const unit = await createUnit(data);
 
-  return redirect(`/units`);
+  return redirect(`/units/${unit.id}/images`);
 }
 
 const input = "border border-gray-300 px-3 py-2 text-sm"; // class name input

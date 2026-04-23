@@ -48,36 +48,6 @@ export async function deleteUnit(id: string): Promise<void> {
   }
 }
 
-export async function changeStatus(
-  id: string,
-  status: "available" | "sold" | "rented",
-): Promise<Unit> {
-  try {
-    const res = await fetch(`${API_URL}/portal/units/${id}/status`, {
-      method: "PATCH",
-      headers: portalHeaders,
-      body: JSON.stringify({ status }),
-    });
-    if (!res.ok) throw new Error("Failed to change status");
-    return res.json();
-  } catch {
-    throw new Error("Failed to change status");
-  }
-}
-
-export async function toggleHot(id: string): Promise<Unit> {
-  try {
-    const res = await fetch(`${API_URL}/portal/units/${id}/hot`, {
-      method: "PATCH",
-      headers: portalHeaders,
-    });
-    if (!res.ok) throw new Error("Failed to toggle hot");
-    return res.json();
-  } catch {
-    throw new Error("Failed to toggle hot");
-  }
-}
-
 export async function getUnits(
   params?: Record<string, string>,
 ): Promise<PaginatedUnits> {
@@ -98,5 +68,35 @@ export async function getUnitDetails(id: string): Promise<Unit | null> {
     return res.json();
   } catch {
     return null;
+  }
+}
+
+export async function toggleHot(id: string): Promise<Unit> {
+  try {
+    const res = await fetch(`${API_URL}/portal/units/${id}/hot`, {
+      method: "PATCH",
+      headers: portalHeaders,
+    });
+    if (!res.ok) throw new Error("Failed to toggle hot");
+    return res.json();
+  } catch {
+    throw new Error("Failed to toggle hot");
+  }
+}
+
+export async function changeStatus(
+  id: string,
+  status: "available" | "sold" | "rented",
+): Promise<Unit> {
+  try {
+    const res = await fetch(`${API_URL}/portal/units/${id}/status`, {
+      method: "PATCH",
+      headers: portalHeaders,
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) throw new Error("Failed to change status");
+    return res.json();
+  } catch {
+    throw new Error("Failed to change status");
   }
 }

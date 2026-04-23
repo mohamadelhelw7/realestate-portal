@@ -25,6 +25,8 @@ export async function uploadImages(
       },
     );
     if (!res.ok) throw new Error("Failed to upload images");
+
+    return res.json();
   } catch {
     throw new Error("Failed to upload images");
   }
