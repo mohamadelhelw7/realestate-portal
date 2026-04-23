@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/units._index";
-import { getUnits } from "~/lib/api";
+import { getUnits } from "~/lib/api.server";
 import { Header } from "~/components/layout/Header";
 
 export async function loader() {
