@@ -52,11 +52,17 @@ export async function getUnits(
   params?: Record<string, string>,
 ): Promise<PaginatedUnits> {
   try {
+    console.log("BACKEND:", API_URL);
     const query = new URLSearchParams(params).toString();
     const res = await fetch(`${API_URL}/units?${query}`);
-    if (!res.ok) throw new Error("Failed to fetch units");
+    if (!res.ok) {
+      const error = await res.text();
+      console.error("Failed to fetch units:", res.status, error);
+      throw new Error(`Failed to fetch units: ${res.status} ${error}`);
+    }
     return res.json();
-  } catch {
+  } catch (error) {
+    console.error("getUnits error:", error);
     return { units: [], hasMore: false, nextCursor: undefined };
   }
 }
