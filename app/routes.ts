@@ -6,4 +6,5 @@ export default [
   route("units/new", "routes/units.new.tsx"),
   route("units/:id", "routes/units.$id.edit.tsx"),
   route("units/:id/images", "routes/units.$id.images.tsx"),
+  route("units/:id/view", "routes/units.$id.view.tsx"),
 ] satisfies RouteConfig;

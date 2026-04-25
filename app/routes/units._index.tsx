@@ -33,7 +33,10 @@ export default function UnitsPage({ loaderData }: Route.ComponentProps) {
                 Title
               </th>
               <th className="text-left px-4 py-2.5 font-medium text-gray-700 border-r border-gray-300">
-                City
+                Compound
+              </th>
+              <th className="text-left px-4 py-2.5 font-medium text-gray-700 border-r border-gray-300">
+                Phase
               </th>
               <th className="text-left px-4 py-2.5 font-medium text-gray-700 border-r border-gray-300">
                 Type
@@ -69,7 +72,10 @@ export default function UnitsPage({ loaderData }: Route.ComponentProps) {
                   {unit.title}
                 </td>
                 <td className="px-4 py-2.5 border-r border-gray-200 text-gray-600">
-                  {unit.city}
+                  {unit.compound}
+                </td>
+                <td className="px-4 py-2.5 border-r border-gray-200 text-gray-600">
+                  {unit.phase}
                 </td>
                 <td className="px-4 py-2.5 border-r border-gray-200 text-gray-600 capitalize">
                   {unit.type}
@@ -94,14 +100,22 @@ export default function UnitsPage({ loaderData }: Route.ComponentProps) {
                   </span>
                 </td>
                 <td className="px-4 py-2.5">
-                  <div className="flex gap-2">
-                    <Link
-                      to={`/units/${unit.id}`}
-                      className="text-xs text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </Link>
-                  </div>
+                  <td className="px-4 py-2.5">
+                    <div className="flex gap-3">
+                      <Link
+                        to={`/units/${unit.id}/view`}
+                        className="text-xs text-gray-600 hover:underline"
+                      >
+                        View
+                      </Link>
+                      <Link
+                        to={`/units/${unit.id}`}
+                        className="text-xs text-blue-600 hover:underline"
+                      >
+                        Edit
+                      </Link>
+                    </div>
+                  </td>
                 </td>
               </tr>
             ))}

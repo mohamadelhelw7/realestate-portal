@@ -52,7 +52,6 @@ export async function getUnits(
   params?: Record<string, string>,
 ): Promise<PaginatedUnits> {
   try {
-    console.log("BACKEND:", API_URL);
     const query = new URLSearchParams(params).toString();
     const res = await fetch(`${API_URL}/units?${query}`);
     if (!res.ok) {
