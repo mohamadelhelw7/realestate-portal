@@ -14,6 +14,9 @@ import { COMPOUNDS } from "~/lib/data/compounds";
 export async function action({ request }: Route.ActionArgs) {
   const f = await request.formData();
   const g = (key: string) => f.get(key);
+  const deliveryDate = g("deliveryDate")
+    ? new Date(g("deliveryDate") as string).toISOString()
+    : undefined;
 
   const data = {
     title: g("title"),
@@ -40,16 +43,18 @@ export async function action({ request }: Route.ActionArgs) {
     canAddPool: g("canAddPool") === "true",
     Hot: g("Hot") === "true",
     isReadyToMove: g("isReadyToMove") === "true",
-    deliveryDate: g("deliveryDate") || undefined,
+    deliveryDate,
     gardenArea: num(g("gardenArea")),
-    sellerName: g("sellerName"),
-    sellerPhone: g("sellerPhone"),
+    sellerFirstName: g("sellerFirstName"),
+    sellerLastName: g("sellerLastName"),
+    sellerPhoneNumber: g("sellerPhoneNumber"),
     sellerEmail: g("sellerEmail") || undefined,
     sellerNotes: g("sellerNotes") || undefined,
   };
 
   const unit = await createUnit(data);
-
+  console.log("unit object: ", unit);
+  console.log("unit id: ", unit.id);
   return redirect(`/units/${unit.id}/images`);
 }
 

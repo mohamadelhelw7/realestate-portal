@@ -27,7 +27,7 @@ export function SellerSection() {
           <div className="flex flex-col gap-1">
             <label className="text-xs text-gray-600">Phone *</label>
             <input
-              name="sellerPhone"
+              name="sellerPhoneNumber"
               required
               className="border border-gray-300 px-3 py-2 text-sm"
               placeholder="e.g. 01012345678"
