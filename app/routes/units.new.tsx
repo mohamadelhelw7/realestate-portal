@@ -57,10 +57,11 @@ const input = "border border-gray-300 px-3 py-2 text-sm"; // class name input
 
 /* ─────────────────────────────────────────────────────────────────────── */
 
-export default function AddUnitPage() {
+export default function AddUnitPage({ actionData }: Route.ComponentProps) {
   const [selectedCompound, setSelectedCompound] = useState<string>("");
   const phases =
     COMPOUNDS.find((c) => c.name === selectedCompound)?.phases ?? [];
+  const error = (actionData as any)?.error;
 
   return (
     <div>
@@ -75,6 +76,15 @@ export default function AddUnitPage() {
           </Link>
         }
       />
+
+      <div>
+        {error && (
+          <div className="mx-6 mt-4 px-4 py-3 bg-red-50 border border-red-300 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+        {/* rest of form */}
+      </div>
 
       <div className="p-6 max-w-3xl">
         <form method="post" className="flex flex-col gap-4">

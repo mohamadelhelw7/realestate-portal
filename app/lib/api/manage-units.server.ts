@@ -8,18 +8,22 @@ const portalHeaders = {
   "x-api-key": API_KEY,
 };
 
-export async function createUnit(data: object): Promise<Unit> {
-  try {
-    const res = await fetch(`${API_URL}/portal/units`, {
-      method: "POST",
-      headers: portalHeaders,
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error("Failed to create unit");
-    return res.json();
-  } catch {
-    throw new Error("Failed to create unit");
+export async function createUnit(data: object) {
+  const res = await fetch(`${process.env.API_URL}/portal/units`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": process.env.PORTAL_API_KEY!,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    return { error: error.message ?? "Failed to create unit" };
   }
+
+  return res.json();
 }
 
 export async function updateUnit(id: string, data: object): Promise<Unit> {
