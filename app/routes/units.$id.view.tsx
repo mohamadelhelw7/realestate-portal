@@ -1,6 +1,7 @@
 import type { Route } from "./+types/units.$id.view";
 import { Link } from "react-router";
 import { Header } from "~/components/layout/Header";
+import { ImageGallery } from "~/components/layout/ImageGallery";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const { id } = params as { id: string };
@@ -221,29 +222,7 @@ export default function UnitViewPage({ loaderData }: Route.ComponentProps) {
           </div>
         )}
 
-        {unit.images?.length > 0 && (
-          <div className="border border-gray-300 bg-white">
-            <div className="px-4 py-2.5 bg-gray-100 border-b border-gray-300 text-sm font-medium text-gray-700">
-              Images ({unit.images.length})
-            </div>
-            <div className="p-4 grid grid-cols-4 gap-3">
-              {unit.images.map((image: any) => (
-                <div key={image.id} className="relative border border-gray-200">
-                  <img
-                    src={image.url}
-                    alt=""
-                    className="w-full h-24 object-cover"
-                  />
-                  {image.isCover && (
-                    <div className="absolute top-1 left-1 bg-gray-900 text-white text-[10px] px-1.5 py-0.5">
-                      Cover
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {unit.images?.length > 0 && <ImageGallery images={unit.images ?? []} />}
       </div>
     </div>
   );
