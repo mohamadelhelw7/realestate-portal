@@ -1,7 +1,15 @@
 export const COMPOUNDS = [
   {
     name: "Owest",
-    phases: ["Tulwa", "Core", "Spring Valley"],
+    phases: [
+      "Tulwa",
+      "Core",
+      "Spring Valley",
+      "Club Residence",
+      "Whyt",
+      "Hill Side",
+      "Qemet",
+    ],
   },
   {
     name: "Zed West",

@@ -1,11 +1,12 @@
 export const TYPES = [
   "apartment",
-  "villa",
+  "loft",
   "studio",
   "duplex",
   "penthouse",
-  "office",
-  "retail",
+  "townhouse",
+  "twinhosue",
+  "standalone vila",
 ];
 
 export const PURPOSES = ["sale", "rent"];
