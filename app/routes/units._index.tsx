@@ -1,15 +1,37 @@
-import { Link } from "react-router";
+import { Link, useSubmit } from "react-router";
 import type { Route } from "./+types/units._index";
 import { getUnits } from "~/lib/api/manage-units.server";
 import { Header } from "~/components/layout/Header";
+import SearchBar from "~/components/layout/SearchBar";
+import { useState } from "react";
 
-export async function loader() {
+export async function loader({ request }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const search = url.searchParams.get("search") ?? "";
   const result = await getUnits({ take: "100" });
-  return { units: result.units };
+
+  const units = search
+    ? result.units.filter(
+        (unit: any) =>
+          unit.id.includes(search) ||
+          unit.title.toLowerCase().includes(search.toLowerCase()) ||
+          unit.city.toLowerCase().includes(search.toLowerCase()) ||
+          unit.phase.toLowerCase().includes(search.toLowerCase()),
+      )
+    : result.units;
+
+  return { units, search };
 }
 
 export default function UnitsPage({ loaderData }: Route.ComponentProps) {
-  const { units } = loaderData;
+  const { units, search } = loaderData;
+  const [searchValue, setSearchValue] = useState(search);
+  const submit = useSubmit();
+
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchValue(e.target.value);
+    submit({ search: e.target.value }, { method: "get" });
+  }
 
   return (
     <div>
@@ -26,6 +48,7 @@ export default function UnitsPage({ loaderData }: Route.ComponentProps) {
       />
 
       <div className="p-6">
+        <SearchBar handleSearch={handleSearch} searchValue={searchValue} />
         <table className="w-full border border-gray-300 text-sm">
           <thead>
             <tr className="bg-gray-100 border-b border-gray-300">
@@ -100,22 +123,20 @@ export default function UnitsPage({ loaderData }: Route.ComponentProps) {
                   </span>
                 </td>
                 <td className="px-4 py-2.5">
-                  <td className="px-4 py-2.5">
-                    <div className="flex gap-3">
-                      <Link
-                        to={`/units/${unit.id}/view`}
-                        className="text-xs text-gray-600 hover:underline"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        to={`/units/${unit.id}`}
-                        className="text-xs text-blue-600 hover:underline"
-                      >
-                        Edit
-                      </Link>
-                    </div>
-                  </td>
+                  <div className="flex gap-3">
+                    <Link
+                      to={`/units/${unit.id}/view`}
+                      className="text-xs text-gray-600 hover:underline"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      to={`/units/${unit.id}`}
+                      className="text-xs text-blue-600 hover:underline"
+                    >
+                      Edit
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}
