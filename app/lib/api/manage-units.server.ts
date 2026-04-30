@@ -71,13 +71,14 @@ export async function getUnits(
 }
 
 export async function getUnitDetails(id: string): Promise<Unit | null> {
-  try {
-    const res = await fetch(`${API_URL}/units/${id}`);
-    if (!res.ok) throw new Error("Failed to fetch unit");
-    return res.json();
-  } catch {
-    return null;
-  }
+  const res = await fetch(`${API_URL}/units/${id}/admin`, {
+    method: "GET",
+    headers: portalHeaders,
+  });
+
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`Failed to fetch unit: ${res.status}`);
+  return res.json();
 }
 
 export async function toggleHot(id: string): Promise<Unit> {
