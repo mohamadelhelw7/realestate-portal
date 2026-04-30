@@ -4,10 +4,16 @@ import { TYPES, PURPOSES, STATUSES, CYCLES } from "~/lib/data/data";
 import { COMPOUNDS } from "~/lib/data/compounds";
 import Section from "~/components/layout/Section";
 import Field from "~/components/layout/Field";
+import { MoneyInput } from "../layout/MoneyInput";
+import { formatDuration } from "~/lib/format";
 
 const inputCls = "border border-gray-300 px-3 py-2 text-sm";
 
 export interface UnitFormValues {
+  maintenance?: number | null;
+  paymentMonths?: number | null;
+  paymentNotes?: string;
+  finishing?: string;
   title?: string;
   description?: string;
   price?: number;
@@ -101,7 +107,11 @@ export function UnitForm({
   footerExtras,
   cancelHref = "/units",
 }: Props) {
-  const v = initialValues;
+  const v = {
+    purpose: "sale",
+    status: "available",
+    ...initialValues,
+  };
   const [selectedCompound, setSelectedCompound] = useState<string>(
     v.compound ?? "",
   );
@@ -260,27 +270,27 @@ export function UnitForm({
               />
             </Field>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Floor">
-              <input
-                name="floor"
-                type="number"
-                defaultValue={v.floor ?? ""}
-                className={inputCls}
-                placeholder="4"
-              />
-            </Field>
-            <Field label="Total floors">
-              <input
-                name="totalFloors"
-                type="number"
-                min="1"
-                defaultValue={v.totalFloors ?? ""}
-                className={inputCls}
-                placeholder="10"
-              />
-            </Field>
-          </div>
+          <Field label="Floor">
+            <input
+              name="floor"
+              type="number"
+              defaultValue={v.floor ?? ""}
+              className={inputCls}
+              placeholder="4"
+            />
+          </Field>
+          <Field label="Finishing">
+            <select
+              name="finishing"
+              defaultValue={v.finishing ?? ""}
+              className={inputCls}
+            >
+              <option value="">— Select finishing</option>
+              <option value="core_and_shell">Core & shell</option>
+              <option value="semi_finished">Semi-finished</option>
+              <option value="fully_finished">Fully finished</option>
+            </select>
+          </Field>
         </Section>
 
         <Section title="Amenities">
@@ -348,67 +358,7 @@ export function UnitForm({
           </div>
         </Section>
 
-        <Section title="Pricing">
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Price (EGP)" required>
-              <input
-                name="price"
-                type="number"
-                min="0"
-                required
-                defaultValue={v.price ?? ""}
-                className={inputCls}
-                placeholder="4500000"
-              />
-            </Field>
-            <Field label="Down payment">
-              <input
-                name="downpayment"
-                type="number"
-                min="0"
-                defaultValue={v.downpayment ?? ""}
-                className={inputCls}
-                placeholder="500000"
-              />
-            </Field>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Installment">
-              <input
-                name="installments"
-                type="number"
-                min="0"
-                defaultValue={v.installments ?? ""}
-                className={inputCls}
-                placeholder="150000"
-              />
-            </Field>
-            <Field label="Cycle (months)">
-              <select
-                name="cycle"
-                defaultValue={v.cycle ?? ""}
-                className={inputCls}
-              >
-                <option value="">—</option>
-                {CYCLES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </Field>
-          </div>
-          <Field label="Commission (EGP)">
-            <input
-              name="commission"
-              type="number"
-              min="0"
-              defaultValue={v.commission ?? ""}
-              className={inputCls}
-              placeholder="112500"
-            />
-          </Field>
-        </Section>
+        <PricingSection v={v} />
 
         <Section title="Availability">
           <div className="grid grid-cols-2 gap-3">
@@ -478,5 +428,127 @@ export function UnitForm({
         </div>
       </form>
     </div>
+  );
+}
+
+function PricingSection({ v }: { v: UnitFormValues }) {
+  const [price, setPrice] = useState<number | null>(v.price ?? null);
+  const [downpayment, setDownpayment] = useState<number | null>(
+    v.downpayment ?? null,
+  );
+  const [years, setYears] = useState<number>(
+    v.paymentMonths ? Math.floor(v.paymentMonths / 12) : 0,
+  );
+  const [months, setMonths] = useState<number>(
+    v.paymentMonths ? v.paymentMonths % 12 : 0,
+  );
+
+  const totalMonths = years * 12 + months;
+  const remaining =
+    price !== null && downpayment !== null
+      ? Math.max(price - downpayment, 0)
+      : null;
+  const perInstallment =
+    remaining !== null && totalMonths > 0
+      ? Math.round(remaining / totalMonths)
+      : null;
+
+  return (
+    <Section title="Pricing">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Price (EGP)" required>
+          <MoneyInput
+            name="price"
+            defaultValue={v.price}
+            required
+            placeholder="4,500,000"
+            className={inputCls}
+            onChange={setPrice}
+          />
+        </Field>
+        <Field label="Down payment (EGP)">
+          <MoneyInput
+            name="downpayment"
+            defaultValue={v.downpayment}
+            placeholder="500,000"
+            className={inputCls}
+            onChange={setDownpayment}
+          />
+        </Field>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Pay over (years)">
+          <input
+            type="number"
+            min="0"
+            value={years || ""}
+            onChange={(e) => setYears(Number(e.target.value) || 0)}
+            className={inputCls}
+            placeholder="3"
+          />
+        </Field>
+        <Field label="And months">
+          <input
+            type="number"
+            min="0"
+            max="11"
+            value={months || ""}
+            onChange={(e) => setMonths(Number(e.target.value) || 0)}
+            className={inputCls}
+            placeholder="0"
+          />
+        </Field>
+      </div>
+
+      {/* Single hidden input for the actual stored value */}
+      <input type="hidden" name="paymentMonths" value={totalMonths || ""} />
+
+      {/* Live preview */}
+      {remaining !== null && totalMonths > 0 && (
+        <div className="border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-600 space-y-1">
+          <div className="flex justify-between">
+            <span>Remaining after down payment:</span>
+            <span className="font-medium text-gray-900">
+              {remaining.toLocaleString()} EGP
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>Per month over {formatDuration(totalMonths)}:</span>
+            <span className="font-medium text-gray-900">
+              {perInstallment?.toLocaleString()} EGP
+            </span>
+          </div>
+        </div>
+      )}
+
+      <Field label="Commission (EGP)">
+        <MoneyInput
+          name="commission"
+          defaultValue={v.commission}
+          placeholder="112,500"
+          className={inputCls}
+        />
+      </Field>
+
+      <Field label="Maintenance (EGP)">
+        <MoneyInput
+          name="maintenance"
+          defaultValue={v.maintenance}
+          placeholder="50,000"
+          className={inputCls}
+        />
+      </Field>
+
+      <Field label="Payment plan notes">
+        <textarea
+          name="paymentNotes"
+          rows={3}
+          defaultValue={v.paymentNotes ?? ""}
+          className={`${inputCls} w-full resize-none`}
+          placeholder="e.g. First installment due 6 months after delivery"
+        />
+      </Field>
+    </Section>
   );
 }

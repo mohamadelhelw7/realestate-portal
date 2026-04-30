@@ -43,5 +43,9 @@ export function parseUnitFormData(f: FormData) {
     Hot: g("Hot") === "true",
     isReadyToMove,
     deliveryDate,
+    paymentMonths: num(g("paymentMonths")),
+    paymentNotes: g("paymentNotes") || undefined,
+    finishing: g("finishing") || undefined,
+    maintenance: num(g("maintenance")),
   };
 }
