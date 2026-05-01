@@ -34,6 +34,15 @@ export function SellerSection() {
             />
           </div>
         </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-gray-600">Notes</label>
+          <textarea
+            name="sellerNotes"
+            rows={3}
+            className="border border-gray-300 px-3 py-2 text-sm resize-none"
+            placeholder="Anything to remember about this seller"
+          />
+        </div>
       </div>
     </div>
   );

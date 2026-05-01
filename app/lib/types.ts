@@ -31,6 +31,14 @@ export interface Unit {
   createdAt: string;
   updatedAt: string;
   images?: Image[];
+  finishing?: string;
+  maintenance: number;
+  commission: number;
+  paymentMonths: number;
+  paymentNotes: string;
+  roof: boolean;
+  roofArea: number;
+  seller: any;
 }
 
 export interface Image {
