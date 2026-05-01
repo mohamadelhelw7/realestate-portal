@@ -289,6 +289,12 @@ export function UnitForm({
               <option value="core_and_shell">Core & shell</option>
               <option value="semi_finished">Semi-finished</option>
               <option value="fully_finished">Fully finished</option>
+              <option value="fully_finished_acs">
+                Fully finished with ACs
+              </option>
+              <option value="fully_finished_acs_kitchen">
+                Fully finished with ACs and Kitchen
+              </option>
             </select>
           </Field>
         </Section>
